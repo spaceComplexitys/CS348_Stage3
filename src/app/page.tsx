@@ -3,10 +3,11 @@
 // }
 
 import { db } from "@/db";
-import { postsTable, usersTable } from "@/db/schema";
+import { videosTable, usersTable } from "@/db/schema";
+import { timestamp } from "drizzle-orm/mysql-core";
 
 export default async function Home() {
-  const post = await db.query.postsTable.findMany();
+  const video = await db.query.usersTable.findMany();
   return (
     <main className="flex min-h-screen flex-col items-center justify-between">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono">
@@ -14,22 +15,26 @@ export default async function Home() {
           action={async () => {
             "use server";
             await db.insert(usersTable).values({
-              id: 2,
-              age: 20,
-              email: "test@example.com",
-              name: "bob",
+              id: 100,
+              name: "bob1",
+              email: "test1@example.com",
+              //createdAt: timestamp
             });
-            await db.insert(postsTable).values({
+            await db.insert(videosTable).values({
+              id: 100,
               title: "please subscribe",
-              content: "yolo",
-              userId: 2,
+              description: "bro",
+              userId: 200,
+              viewCount: 1,
+              likeCount: 1,
+              //createdAt: timestamp,
             });
           }}
         >
           <button>submit</button>
         </form>
-        {post.map(post => (
-          <div>{post.title}</div>
+        {video.map(video => (
+          <div>{video.email}</div>
         ))}
       </div>
     </main>
