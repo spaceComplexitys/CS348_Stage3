@@ -2,12 +2,6 @@ import { db } from '@/db';
 import { NextResponse } from 'next/server';
 
 
-// export async function GET() {
-//   return NextResponse.json({
-//     hello: "world",
-//   })
-// }
-
 export async function GET() {
     try {
       const transactions = await db.query.transactionsTable.findMany();

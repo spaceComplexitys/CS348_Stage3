@@ -14,8 +14,10 @@ const RootLayout = ({ children }: RootLayoutProps) => {
           <nav>
             <ul style={styles.navList}>
               <li style={styles.navItem}><a href="/" style={styles.link}>Home</a></li>
-              <li style={styles.navItem}><a href="/about" style={styles.link}>About</a></li>
-              <li style={styles.navItem}><a href="/blog" style={styles.link}>Blog</a></li>
+              <li style={styles.navItem}><a href="/pages/category" style={styles.link}>category</a></li>
+              <li style={styles.navItem}><a href="/pages/payee" style={styles.link}>payee</a></li>
+              <li style={styles.navItem}><a href="/pages/inflow" style={styles.link}>inflow</a></li>
+              <li style={styles.navItem}><a href="/pages/outflow" style={styles.link}>outflow</a></li>
             </ul>
           </nav>
         </header>
