@@ -10,10 +10,8 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const transaction_id = parseFloat(searchParams.get("transactionId") || "");
 
-
     // Insert the transaction data into the database
-    //const newTransaction = await db.delete(transactionsTable).values(data);
-    const newTransaction = await db.delete(transactionsTable).where(eq(transactionsTable.transactionId, transaction_id));
+    const newTransaction = await db.delete(transactionsTable).where(eq(transactionsTable.transaction_id, transaction_id));
     // Return the newly created transaction in JSON format
     return NextResponse.json(newTransaction);
   } catch (error) {
