@@ -1,12 +1,13 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { Transaction } from '../app/types/transaction';
-import { integer } from 'drizzle-orm/pg-core';
 
 const Home = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
-  const [newTransaction, setNewTransaction] = useState({
+  const [isAddingTransaction, setIsAddingTransaction] = useState(false); // State to control form visibility
+
+  const [newTransaction, setNewTransaction] = useState<Transaction>({
     date: new Date().toLocaleDateString('en-US', {
       month: '2-digit',
       day: '2-digit',
@@ -15,39 +16,21 @@ const Home = () => {
     payee: '',
     category: '',
     memo: '',
-    outflow: '',
-    inflow: '',
+    outflow: 0,
+    inflow: 0,
   });
 
   useEffect(() => {
-    // const fetchTransactions = async () => {
-    //   try {
-    //     const response = await fetch('/api'); // Update the URL as per your API route
-    //     if (!response.ok) throw new Error("Failed to fetch transactions");
-    //     const data = await response.json();
-    //     setTransactions(data);
-    //   } catch (error) {
-    //     console.error(error);
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
     const fetchTransactions = async () => {
       try {
-        const response = await fetch('/api'); // Update the URL as per your API route
+        const response = await fetch('/api');
         if (!response.ok) throw new Error('Failed to fetch transactions');
         const data = await response.json();
 
-        // Ensure data is an array before setting it to transactions
-        if (Array.isArray(data)) {
-          setTransactions(data);
-        } else {
-          console.error('Data fetched is not an array:', data);
-          setTransactions([]); // Set to an empty array if data is not an array
-        }
+        setTransactions(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error(error);
-        setTransactions([]); // Set to an empty array if there's an error
+        setTransactions([]);
       } finally {
         setLoading(false);
       }
@@ -56,11 +39,16 @@ const Home = () => {
     fetchTransactions();
   }, []);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setNewTransaction((prev) => ({
       ...prev,
-      [name]: value,
+      [name]:
+        name === 'outflow' || name === 'inflow'
+          ? value === ''
+            ? ''
+            : parseFloat(value) // Keep it as an empty string if cleared, otherwise parse it
+          : value,
     }));
   };
 
@@ -71,51 +59,49 @@ const Home = () => {
       const postTransaction = async () => {
         try {
           const transactionData = {
-           // transaction_id: 1,
             user_id: 2,
             date: newTransaction.date,
             payee: newTransaction.payee,
             category: newTransaction.category,
             memo: newTransaction.memo,
             outflow: newTransaction.outflow,
-            inflow: newTransaction.outflow,
+            inflow: newTransaction.inflow,
           };
           const response = await fetch('/api/addTransaction', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-
             body: JSON.stringify(transactionData),
           });
           if (!response.ok) throw new Error('Failed to post transaction');
 
           const data = await response.json();
-          setTransactions(data); // Update transactions based on the server response
+          setTransactions(data);
         } catch (error) {
           console.error(error);
         }
       };
 
-      postTransaction(newTransaction); // Call postTransaction with the new transaction
-
-      setNewTransaction({
-        date: new Date().toLocaleDateString('en-US', {
-          month: '2-digit',
-          day: '2-digit',
-          year: 'numeric',
-        }),
-        payee: '',
-        category: '',
-        memo: '',
-        outflow: '',
-        inflow: '',
-      });
+      postTransaction();
+      resetForm(); // Reset the form and hide it after adding the transaction
     }
   };
 
-  const handleCancel = () => {
-    setNewTransaction(null); // Set to null to hide the row
+  const resetForm = () => {
+    setNewTransaction({
+      date: new Date().toLocaleDateString('en-US', {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric',
+      }),
+      payee: '',
+      category: '',
+      memo: '',
+      outflow: 0,
+      inflow: 0,
+    });
+    setIsAddingTransaction(false); // Hide the form
   };
 
   if (loading) {
@@ -127,20 +113,7 @@ const Home = () => {
       <div style={styles.header}>
         <button
           style={styles.button}
-          onClick={() =>
-            setNewTransaction({
-              date: new Date().toLocaleDateString('en-US', {
-                month: '2-digit',
-                day: '2-digit',
-                year: 'numeric',
-              }),
-              payee: '',
-              category: '',
-              memo: '',
-              outflow: '',
-              inflow: '',
-            })
-          }
+          onClick={() => setIsAddingTransaction(true)} // Show the form
         >
           + Add Transaction
         </button>
@@ -162,7 +135,7 @@ const Home = () => {
           </tr>
         </thead>
         <tbody>
-          {newTransaction && (
+          {isAddingTransaction && (
             <>
               <tr style={styles.highlightedRow}>
                 <td style={styles.td}>
@@ -227,8 +200,8 @@ const Home = () => {
                 </td>
               </tr>
               <tr>
-                <td colSpan="6" style={styles.buttonRow}>
-                  <button style={styles.actionButton} onClick={handleCancel}>
+                <td colSpan={6} style={styles.buttonRow}>
+                  <button style={styles.actionButton} onClick={resetForm}>
                     Cancel
                   </button>
                   <button style={styles.actionButton} onClick={addTransaction}>
@@ -238,16 +211,6 @@ const Home = () => {
               </tr>
             </>
           )}
-          {/* {transactions.map((transaction, index) => (
-            <tr key={index} style={index % 2 ? styles.rowOdd : styles.rowEven}>
-              <td style={styles.td}><i style={styles.icon}>ℹ️</i> {transaction.date}</td>
-              <td style={styles.td}>{transaction.payee}</td>
-              <td style={styles.td}>{transaction.category}</td>
-              <td style={styles.td}>{transaction.memo}</td>
-              <td style={styles.td}>{transaction.outflow}</td>
-              <td style={styles.td}>{transaction.inflow}</td>
-            </tr>
-          ))} */}
           {Array.isArray(transactions) &&
             transactions.map((transaction, index) => (
               <tr key={index} style={index % 2 ? styles.rowOdd : styles.rowEven}>
