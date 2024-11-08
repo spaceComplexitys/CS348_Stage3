@@ -1,14 +1,32 @@
-import React from 'react';
+'use client';
+
+import { Transaction } from '@/app/types/transaction';
+import React, { useEffect, useState } from 'react';
 
 const Payee = () => {
-  const transactions = [
-    { date: "10/13/2024", payee: "Amazon", category: "Inflow: Ready to Assign", memo: "", outflow: "$21.39", inflow: "" },
-    { date: "10/13/2024", payee: "Amazon", category: "Inflow: Ready to Assign", memo: "", outflow: "$17.11", inflow: "" },
-    { date: "10/06/2024", payee: "AMAZON MKTPL*BA09E2PQ3", category: "This needs a category", memo: "", outflow: "$4.26", inflow: "" },
-    { date: "10/02/2024", payee: "OPENAI *CHATGPT SUBSCR", category: "Guilt Free: Guilt Free", memo: "", outflow: "$20.00", inflow: "" },
-    { date: "09/06/2024", payee: "MCGRAW-HILL HIGHER ED", category: "This needs a category", memo: "Comes out from Unexpected", outflow: "$179.95", inflow: "" },
-    // Add more rows as needed
-  ];
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const response = await fetch('/api/filterPayee?payee=Amazon'); // Update the URL as per your API route
+        if (!response.ok) throw new Error('Failed to fetch transactions');
+        const data = await response.json();
+        setTransactions(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div style={styles.container}>
