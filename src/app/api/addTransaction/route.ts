@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     console.log("body.user_id", body.user_id)
     console.log("body.date", body.date)
     console.log("body.payee", body.payee)
-    console.log(" body.category",  body.category)
+    console.log("body.category",  body.category)
     console.log("body.memo ", body.memo )
     console.log("body.outflow", body.outflow)
     console.log("body.inflow", body.inflow)

@@ -8,6 +8,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
+
     // Define data as an object, not an array
     const data = {
       transactionId: body.transaction_id || 1000000,
@@ -24,7 +25,7 @@ export async function POST(request: NextRequest) {
     const updatedTransaction = await db
       .update(transactionsTable)
       .set(data)
-      .where(eq(transactionsTable.transactionId, body.transaction_id));
+      .where(eq(transactionsTable.transaction_id, body.transaction_id));
 
     // Return the updated transaction in JSON format
     return NextResponse.json(updatedTransaction);
