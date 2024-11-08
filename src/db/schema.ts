@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm';
+
 import { integer, sqliteTable, text, real } from 'drizzle-orm/sqlite-core';
 
 // Users Table
@@ -15,7 +15,7 @@ export const usersTable = sqliteTable('users', {
 
 // Transactions Table
 export const transactionsTable = sqliteTable('transactions', {
-  transactionId: integer('transaction_id').primaryKey(),
+  transaction_id: integer({ mode: 'number' }).primaryKey({ autoIncrement: true }),
   userId: integer('user_id')
     .notNull()
     .references(() => usersTable.userId, { onDelete: 'cascade' }),
