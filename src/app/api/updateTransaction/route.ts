@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     // Define data as an object, not an array
     const data = {
       transactionId: body.transaction_id || 1000000,
-      userId: body.user_id || 10000000, // default value if not provided
+      user_id: body.user_id || 10000000, // default value if not provided
       date: body.date || "1/1/1",
       payee: body.payee || "Default",
       category: body.category || "Default",
@@ -20,6 +20,8 @@ export async function POST(request: NextRequest) {
       outflow: body.outflow || 0,
       inflow: body.inflow || 0
     };
+
+    console.log("server side:", data)
 
     // Update the transaction in the database
     const updatedTransaction = await db

@@ -17,8 +17,8 @@ export async function GET(request: Request): Promise<NextResponse> {
     console.log("This is outflow:", outflow);
     const transactions = await db
       .select({
-        transaction_id: transactionsTable.transactionId,
-        user_id: transactionsTable.userId,
+        transaction_id: transactionsTable.transaction_id,
+        user_id: transactionsTable.user_id,
         date: transactionsTable.date,
         payee: transactionsTable.payee,
         category: transactionsTable.category,

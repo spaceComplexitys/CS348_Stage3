@@ -3,7 +3,7 @@ import { integer, sqliteTable, text, real } from 'drizzle-orm/sqlite-core';
 
 // Users Table
 export const usersTable = sqliteTable('users', {
-  userId: integer('user_id').primaryKey(),
+  user_id: integer('user_id').primaryKey(),
   username: text('username').notNull(),
   email: text('email').unique().notNull(),
   // budget: real('budget'),
@@ -16,9 +16,9 @@ export const usersTable = sqliteTable('users', {
 // Transactions Table
 export const transactionsTable = sqliteTable('transactions', {
   transaction_id: integer({ mode: 'number' }).primaryKey({ autoIncrement: true }),
-  userId: integer('user_id')
+  user_id: integer('user_id')
     .notNull()
-    .references(() => usersTable.userId, { onDelete: 'cascade' }),
+    .references(() => usersTable.user_id, { onDelete: 'cascade' }),
   date: text('date').notNull(),
   payee: text('payee'),
   category: text('category'),
