@@ -1,5 +1,5 @@
 export interface Transaction {
-    transaction_id: number;
+    transaction_id?: number;
     user_id: number;
     date: string;
     payee: string;
@@ -7,5 +7,5 @@ export interface Transaction {
     memo: string;
     outflow: number;
     inflow: number;
-    created_at: string;
+    created_at?: string;
 }

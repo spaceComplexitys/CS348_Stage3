@@ -1,5 +1,6 @@
 import { db } from '@/db';
 import { transactionsTable } from '@/db/schema';
+import { integer } from 'drizzle-orm/pg-core';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
@@ -10,8 +11,7 @@ export async function POST(request: NextRequest) {
 
     // Use the body data to define the data object
     const data = {
-      transactionId: body.transaction_id || 1000000,
-      userId: body.user_id || 10000000, // default value if not provided
+      user_id: body.user_id || 10000000, // default value if not provided
       date: body.date || "1/1/1",
       payee: body.payee || "Default",
       category: body.category || "Default",

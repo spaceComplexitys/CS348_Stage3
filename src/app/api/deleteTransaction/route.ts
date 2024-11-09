@@ -4,24 +4,28 @@ import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+
 export async function DELETE(request: NextRequest) {
   try {
-    // Parse JSON data from the request body or use test data
+    // Extract transaction_id from URL search parameters
     const { searchParams } = new URL(request.url);
-    const transaction_id = parseFloat(searchParams.get("transactionId") || "");
+    const transaction_id = parseFloat(searchParams.get("transaction_id") || "");
 
+    console.log("transaction_id", transaction_id);
 
-    // Insert the transaction data into the database
-    //const newTransaction = await db.delete(transactionsTable).values(data);
-    const newTransaction = await db.delete(transactionsTable).where(eq(transactionsTable.transactionId, transaction_id));
-    // Return the newly created transaction in JSON format
-    return NextResponse.json(newTransaction);
+    // Proceed with the delete operation in the database
+    const deleteResult = await db
+      .delete(transactionsTable)
+      .where(eq(transactionsTable.transaction_id, transaction_id));
+
+    // Return the result in JSON format
+    return NextResponse.json(deleteResult);
   } catch (error) {
-    console.error("Error creating transaction:", error);
+    console.error("Error deleting transaction:", error);
 
     // Return an error response in case of failure
     return NextResponse.json(
-      { error: 'Failed to create transaction' },
+      { error: 'Failed to delete transaction' },
       { status: 500 }
     );
   }
