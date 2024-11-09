@@ -1,3 +1,235 @@
+// 'use client';
+// import React, { useEffect, useState } from 'react';
+// import { Transaction } from '../app/types/transaction';
+
+// const Home = () => {
+//   const [transactions, setTransactions] = useState<Transaction[]>([]);
+//   const [loading, setLoading] = useState(true);
+//   const [isAddingTransaction, setIsAddingTransaction] = useState(false); // State to control form visibility
+
+//   const [newTransaction, setNewTransaction] = useState<Transaction>({
+//     date: new Date().toLocaleDateString('en-US', {
+//       month: '2-digit',
+//       day: '2-digit',
+//       year: 'numeric',
+//     }),
+//     payee: '',
+//     category: '',
+//     memo: '',
+//     outflow: 0,
+//     inflow: 0,
+//   });
+
+//   useEffect(() => {
+//     const fetchTransactions = async () => {
+//       try {
+//         const response = await fetch('/api');
+//         if (!response.ok) throw new Error('Failed to fetch transactions');
+//         const data = await response.json();
+
+//         setTransactions(Array.isArray(data) ? data : []);
+//       } catch (error) {
+//         console.error(error);
+//         setTransactions([]);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchTransactions();
+//   }, []);
+
+//   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     const { name, value } = e.target;
+//     setNewTransaction((prev) => ({
+//       ...prev,
+//       [name]:
+//         name === 'outflow' || name === 'inflow'
+//           ? value === ''
+//             ? ''
+//             : parseFloat(value) // Keep it as an empty string if cleared, otherwise parse it
+//           : value,
+//     }));
+//   };
+
+//   const addTransaction = () => {
+//     if (newTransaction) {
+//       setTransactions([newTransaction, ...transactions]);
+
+//       const postTransaction = async () => {
+//         try {
+//           const transactionData = {
+//             user_id: 2,
+//             date: newTransaction.date,
+//             payee: newTransaction.payee,
+//             category: newTransaction.category,
+//             memo: newTransaction.memo,
+//             outflow: newTransaction.outflow,
+//             inflow: newTransaction.inflow,
+//           };
+//           const response = await fetch('/api/addTransaction', {
+//             method: 'POST',
+//             headers: {
+//               'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify(transactionData),
+//           });
+//           if (!response.ok) throw new Error('Failed to post transaction');
+
+//           const data = await response.json();
+//           setTransactions(data);
+//         } catch (error) {
+//           console.error(error);
+//         }
+//       };
+
+//       postTransaction();
+//       resetForm(); // Reset the form and hide it after adding the transaction
+//     }
+//   };
+
+//   const resetForm = () => {
+//     setNewTransaction({
+//       date: new Date().toLocaleDateString('en-US', {
+//         month: '2-digit',
+//         day: '2-digit',
+//         year: 'numeric',
+//       }),
+//       payee: '',
+//       category: '',
+//       memo: '',
+//       outflow: 0,
+//       inflow: 0,
+//     });
+//     setIsAddingTransaction(false); // Hide the form
+//   };
+
+//   if (loading) {
+//     return <div>Loading...</div>;
+//   }
+
+//   return (
+//     <div style={styles.container}>
+//       <div style={styles.header}>
+//         <button
+//           style={styles.button}
+//           onClick={() => setIsAddingTransaction(true)} // Show the form
+//         >
+//           + Add Transaction
+//         </button>
+//         <button style={styles.button}>File Import</button>
+//         <button style={styles.button}>Record Payment</button>
+//         <div style={styles.searchContainer}>
+//           <input style={styles.searchInput} type="text" placeholder="Search transactions" />
+//         </div>
+//       </div>
+//       <table style={styles.table}>
+//         <thead>
+//           <tr>
+//             <th style={styles.th}>Date</th>
+//             <th style={styles.th}>Payee</th>
+//             <th style={styles.th}>Category</th>
+//             <th style={styles.th}>Memo</th>
+//             <th style={styles.th}>Outflow</th>
+//             <th style={styles.th}>Inflow</th>
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {isAddingTransaction && (
+//             <>
+//               <tr style={styles.highlightedRow}>
+//                 <td style={styles.td}>
+//                   <input
+//                     type="text"
+//                     name="date"
+//                     value={newTransaction.date}
+//                     onChange={handleInputChange}
+//                     placeholder="MM/DD/YYYY"
+//                     style={styles.input}
+//                   />
+//                 </td>
+//                 <td style={styles.td}>
+//                   <input
+//                     type="text"
+//                     name="payee"
+//                     value={newTransaction.payee}
+//                     onChange={handleInputChange}
+//                     placeholder="Enter payee"
+//                     style={styles.input}
+//                   />
+//                 </td>
+//                 <td style={styles.td}>
+//                   <input
+//                     type="text"
+//                     name="category"
+//                     value={newTransaction.category}
+//                     onChange={handleInputChange}
+//                     placeholder="Enter category"
+//                     style={styles.input}
+//                   />
+//                 </td>
+//                 <td style={styles.td}>
+//                   <input
+//                     type="text"
+//                     name="memo"
+//                     value={newTransaction.memo}
+//                     onChange={handleInputChange}
+//                     placeholder="Enter memo"
+//                     style={styles.input}
+//                   />
+//                 </td>
+//                 <td style={styles.td}>
+//                   <input
+//                     type="text"
+//                     name="outflow"
+//                     value={newTransaction.outflow}
+//                     onChange={handleInputChange}
+//                     placeholder="Enter outflow"
+//                     style={styles.input}
+//                   />
+//                 </td>
+//                 <td style={styles.td}>
+//                   <input
+//                     type="text"
+//                     name="inflow"
+//                     value={newTransaction.inflow}
+//                     onChange={handleInputChange}
+//                     placeholder="Enter inflow"
+//                     style={styles.input}
+//                   />
+//                 </td>
+//               </tr>
+//               <tr>
+//                 <td colSpan={6} style={styles.buttonRow}>
+//                   <button style={styles.actionButton} onClick={resetForm}>
+//                     Cancel
+//                   </button>
+//                   <button style={styles.actionButton} onClick={addTransaction}>
+//                     Save
+//                   </button>
+//                 </td>
+//               </tr>
+//             </>
+//           )}
+//           {Array.isArray(transactions) &&
+//             transactions.map((transaction, index) => (
+//               <tr key={index} style={index % 2 ? styles.rowOdd : styles.rowEven}>
+//                 <td style={styles.td}>
+//                   <i style={styles.icon}>ℹ️</i> {transaction.date}
+//                 </td>
+//                 <td style={styles.td}>{transaction.payee}</td>
+//                 <td style={styles.td}>{transaction.category}</td>
+//                 <td style={styles.td}>{transaction.memo}</td>
+//                 <td style={styles.td}>{transaction.outflow}</td>
+//                 <td style={styles.td}>{transaction.inflow}</td>
+//               </tr>
+//             ))}
+//         </tbody>
+//       </table>
+//     </div>
+//   );
+// };
+
 'use client';
 import React, { useEffect, useState } from 'react';
 import { Transaction } from '../app/types/transaction';
@@ -5,7 +237,9 @@ import { Transaction } from '../app/types/transaction';
 const Home = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isAddingTransaction, setIsAddingTransaction] = useState(false); // State to control form visibility
+  const [isAddingTransaction, setIsAddingTransaction] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editIndex, setEditIndex] = useState<number | null>(null);
 
   const [newTransaction, setNewTransaction] = useState<Transaction>({
     date: new Date().toLocaleDateString('en-US', {
@@ -47,44 +281,73 @@ const Home = () => {
         name === 'outflow' || name === 'inflow'
           ? value === ''
             ? ''
-            : parseFloat(value) // Keep it as an empty string if cleared, otherwise parse it
+            : parseFloat(value)
           : value,
     }));
   };
 
-  const addTransaction = () => {
-    if (newTransaction) {
-      setTransactions([newTransaction, ...transactions]);
+  const addTransaction = async () => {
+    try {
+      const response = await fetch('/api/addTransaction', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newTransaction),
+      });
+      if (!response.ok) throw new Error('Failed to add transaction');
+      const data = await response.json();
+      setTransactions([data, ...transactions]);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      resetForm();
+    }
+  };
 
-      const postTransaction = async () => {
-        try {
-          const transactionData = {
-            user_id: 2,
-            date: newTransaction.date,
-            payee: newTransaction.payee,
-            category: newTransaction.category,
-            memo: newTransaction.memo,
-            outflow: newTransaction.outflow,
-            inflow: newTransaction.inflow,
-          };
-          const response = await fetch('/api/addTransaction', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(transactionData),
-          });
-          if (!response.ok) throw new Error('Failed to post transaction');
+  const updateTransaction = async () => { // Todo 
+    if (editIndex === null) return;
+    try {
+      const updatedTransaction = { ...transactions[editIndex], ...newTransaction };
+      const response = await fetch("/api/updateTransaction/", {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedTransaction),
+      });
+      if (!response.ok) throw new Error('Failed to update transaction');
+      const data = await response.json();
 
-          const data = await response.json();
-          setTransactions(data);
-        } catch (error) {
-          console.error(error);
-        }
-      };
+      setTransactions(transactions.map((t, i) => (i === editIndex ? data : t)));
+    } catch (error) {
+      console.error(error);
+    } finally {
+      resetForm();
+    }
+  };
 
-      postTransaction();
-      resetForm(); // Reset the form and hide it after adding the transaction
+  const deleteTransaction = async (index: number) => {
+    try {
+      const transaction = transactions[index];
+      const response = await fetch(`/api/deleteTransaction?transaction_id=${transaction.transaction_id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete transaction');
+      setTransactions(transactions.filter((_, i) => i !== index));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleEdit = (index: number) => {
+    setIsEditing(true);
+    setIsAddingTransaction(true);
+    setEditIndex(index);
+    setNewTransaction(transactions[index]);
+  };
+
+  const handleSave = () => {
+    if (isEditing) {
+      updateTransaction();
+    } else {
+      addTransaction();
     }
   };
 
@@ -101,7 +364,9 @@ const Home = () => {
       outflow: 0,
       inflow: 0,
     });
-    setIsAddingTransaction(false); // Hide the form
+    setIsAddingTransaction(false);
+    setIsEditing(false);
+    setEditIndex(null);
   };
 
   if (loading) {
@@ -111,10 +376,7 @@ const Home = () => {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <button
-          style={styles.button}
-          onClick={() => setIsAddingTransaction(true)} // Show the form
-        >
+        <button style={styles.button} onClick={() => setIsAddingTransaction(true)}>
           + Add Transaction
         </button>
         <button style={styles.button}>File Import</button>
@@ -132,6 +394,7 @@ const Home = () => {
             <th style={styles.th}>Memo</th>
             <th style={styles.th}>Outflow</th>
             <th style={styles.th}>Inflow</th>
+            <th style={styles.th}>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -198,32 +461,35 @@ const Home = () => {
                     style={styles.input}
                   />
                 </td>
-              </tr>
-              <tr>
-                <td colSpan={6} style={styles.buttonRow}>
+                <td style={styles.td}>
                   <button style={styles.actionButton} onClick={resetForm}>
                     Cancel
                   </button>
-                  <button style={styles.actionButton} onClick={addTransaction}>
-                    Save
+                  <button style={styles.actionButton} onClick={handleSave}>
+                    {isEditing ? 'Update' : 'Save'}
                   </button>
                 </td>
               </tr>
             </>
           )}
-          {Array.isArray(transactions) &&
-            transactions.map((transaction, index) => (
-              <tr key={index} style={index % 2 ? styles.rowOdd : styles.rowEven}>
-                <td style={styles.td}>
-                  <i style={styles.icon}>ℹ️</i> {transaction.date}
-                </td>
-                <td style={styles.td}>{transaction.payee}</td>
-                <td style={styles.td}>{transaction.category}</td>
-                <td style={styles.td}>{transaction.memo}</td>
-                <td style={styles.td}>{transaction.outflow}</td>
-                <td style={styles.td}>{transaction.inflow}</td>
-              </tr>
-            ))}
+          {transactions.map((transaction, index) => (
+            <tr key={index} style={index % 2 ? styles.rowOdd : styles.rowEven}>
+              <td style={styles.td}>{transaction.date}</td>
+              <td style={styles.td}>{transaction.payee}</td>
+              <td style={styles.td}>{transaction.category}</td>
+              <td style={styles.td}>{transaction.memo}</td>
+              <td style={styles.td}>{transaction.outflow}</td>
+              <td style={styles.td}>{transaction.inflow}</td>
+              <td style={styles.td}>
+                <button style={styles.actionButton} onClick={() => handleEdit(index)}>
+                  Update
+                </button>
+                <button style={styles.actionButton} onClick={() => deleteTransaction(index)}>
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
