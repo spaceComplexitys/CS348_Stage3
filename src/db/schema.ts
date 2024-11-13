@@ -1,4 +1,4 @@
-
+import { sql } from 'drizzle-orm';
 import { integer, sqliteTable, text, real } from 'drizzle-orm/sqlite-core';
 
 // Users Table
@@ -19,7 +19,9 @@ export const transactionsTable = sqliteTable('transactions', {
   user_id: integer('user_id')
     .notNull()
     .references(() => usersTable.user_id, { onDelete: 'cascade' }),
-  date: text('date').notNull(),
+  date: text('date')
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .notNull(),
   payee: text('payee'),
   category: text('category'),
   memo: text('memo'),

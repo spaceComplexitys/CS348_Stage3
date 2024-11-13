@@ -4,14 +4,13 @@ import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-
 export async function DELETE(request: NextRequest) {
   try {
     // Extract transaction_id from URL search parameters
     const { searchParams } = new URL(request.url);
-    const transaction_id = parseFloat(searchParams.get("transaction_id") || "");
+    const transaction_id = parseFloat(searchParams.get('transaction_id') || '');
 
-    console.log("transaction_id", transaction_id);
+    console.log('transaction_id', transaction_id);
 
     // Proceed with the delete operation in the database
     const deleteResult = await db
@@ -21,12 +20,9 @@ export async function DELETE(request: NextRequest) {
     // Return the result in JSON format
     return NextResponse.json(deleteResult);
   } catch (error) {
-    console.error("Error deleting transaction:", error);
+    console.error('Error deleting transaction:', error);
 
     // Return an error response in case of failure
-    return NextResponse.json(
-      { error: 'Failed to delete transaction' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete transaction' }, { status: 500 });
   }
 }

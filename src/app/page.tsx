@@ -13,7 +13,7 @@ const Home = () => {
     date: new Date().toLocaleDateString('en-US', {
       month: '2-digit',
       day: '2-digit',
-      year: 'numeric',
+      year: '2-digit', // This will give the year in YY format
     }),
     user_id: 2,
     payee: '',
@@ -44,20 +44,21 @@ const Home = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
     setNewTransaction((prev) => ({
       ...prev,
       [name]:
-        name === 'outflow' || name === 'inflow'
-          ? value === ''
-            ? ''
-            : parseFloat(value)
-          : value,
+        (name === 'outflow' || name === 'inflow') && value !== '' && isNaN(Number(value))
+          ? prev[name] // If value is not a number, retain the previous valid value
+          : name === 'outflow' || name === 'inflow'
+            ? parseFloat(value) || '' // Parse valid numbers or set to empty string if NaN
+            : value,
     }));
   };
 
   const addTransaction = async () => {
     try {
-      newTransaction.user_id = 2 // hardcoded for now, will establish auth later
+      newTransaction.user_id = 2; // hardcoded for now, will establish auth later
       const response = await fetch('/api/addTransaction', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -73,13 +74,13 @@ const Home = () => {
     }
   };
 
-  const updateTransaction = async () => { // Todo 
+  const updateTransaction = async () => {
     if (editIndex === null) return;
     try {
       const updatedTransaction = { ...transactions[editIndex], ...newTransaction };
 
-      updatedTransaction.user_id = 2 // hardcoded for now, will establish auth later
-      const response = await fetch("/api/updateTransaction", {
+      updatedTransaction.user_id = 2; // hardcoded for now, will establish auth later
+      const response = await fetch('/api/updateTransaction', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedTransaction),
@@ -94,14 +95,16 @@ const Home = () => {
       resetForm();
     }
   };
- 
 
   const deleteTransaction = async (index: number) => {
     try {
       const transaction = transactions[index];
-      const response = await fetch(`/api/deleteTransaction?transaction_id=${transaction.transaction_id}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `/api/deleteTransaction?transaction_id=${transaction.transaction_id}`,
+        {
+          method: 'DELETE',
+        },
+      );
       if (!response.ok) throw new Error('Failed to delete transaction');
       setTransactions(transactions.filter((_, i) => i !== index));
     } catch (error) {
@@ -176,14 +179,7 @@ const Home = () => {
             <>
               <tr style={styles.highlightedRow}>
                 <td style={styles.td}>
-                  <input
-                    type="text"
-                    name="date"
-                    value={newTransaction.date}
-                    onChange={handleInputChange}
-                    placeholder="MM/DD/YYYY"
-                    style={styles.input}
-                  />
+                  <span>{newTransaction.date}</span>
                 </td>
                 <td style={styles.td}>
                   <input

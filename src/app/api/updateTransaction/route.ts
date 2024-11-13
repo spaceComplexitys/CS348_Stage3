@@ -8,20 +8,18 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-
     // Define data as an object, not an array
     const data = {
       transactionId: body.transaction_id || 1000000,
       user_id: body.user_id || 10000000, // default value if not provided
-      date: body.date || "1/1/1",
-      payee: body.payee || "Default",
-      category: body.category || "Default",
-      memo: body.memo || "Default",
+      payee: body.payee || 'Default',
+      category: body.category || 'Default',
+      memo: body.memo || 'Default',
       outflow: body.outflow || 0,
-      inflow: body.inflow || 0
+      inflow: body.inflow || 0,
     };
 
-    console.log("server side:", data)
+    console.log('server side:', data);
 
     // Update the transaction in the database
     const updatedTransaction = await db
@@ -32,12 +30,9 @@ export async function POST(request: NextRequest) {
     // Return the updated transaction in JSON format
     return NextResponse.json(updatedTransaction);
   } catch (error) {
-    console.error("Error updating transaction:", error);
+    console.error('Error updating transaction:', error);
 
     // Return an error response in case of failure
-    return NextResponse.json(
-      { error: 'Failed to update transaction' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update transaction' }, { status: 500 });
   }
 }
