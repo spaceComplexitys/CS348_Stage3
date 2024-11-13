@@ -5,6 +5,7 @@ import { integer, sqliteTable, text, real } from 'drizzle-orm/sqlite-core';
 export const usersTable = sqliteTable('users', {
   user_id: integer('user_id').primaryKey(),
   username: text('username').notNull(),
+  password: text('password').notNull(),
   email: text('email').unique().notNull(),
   // budget: real('budget'),
   // allocationFixedExpenses: real('allocation_fixed_expenses').default(50.0),  // Percentage
