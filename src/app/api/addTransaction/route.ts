@@ -1,6 +1,5 @@
 import { db } from '@/db';
 import { transactionsTable } from '@/db/schema';
-import { integer } from 'drizzle-orm/pg-core';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 

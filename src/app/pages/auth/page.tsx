@@ -2,20 +2,49 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Users } from '@/app/types/user';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Login attempted:', { username, password });
-    
-    // Implement login logic here (e.g., API call)
+  const [user, setUser] = useState<Users>({
+    user_id: null,
+    username: '',
+    password: '',
+    email: ''
+  });
 
-    // Redirect to home page after login
-    router.push('/');
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Update user state with the entered username and password
+    setUser({
+      ...user,
+      username: username,
+      password: password
+    });
+
+    try {
+      user.username = 'a'
+      user.password = 'a'
+      const response = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(user),
+      });
+      if (!response.ok) throw new Error('Login failed');
+      const data = await response.json();
+
+      if (data != null) {
+        router.push(`/`);
+      } else {
+        console.log('Invalid username or password');
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+    }
   };
 
   return (

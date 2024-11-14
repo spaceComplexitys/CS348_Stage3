@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
 import { db } from '@/db';
-import { transactionsTable, usersTable } from '@/db/schema';
+import { usersTable } from '@/db/schema';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request): Promise<NextResponse> {
@@ -11,13 +11,15 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     const body = await request.json();
 
-    console.log("username", body.username)
+    //console.log("body: ", body.username)
+
     if (!body.username) {
       return NextResponse.json({ error: 'Username is required' }, { status: 400 });
     }
 
     // Fetch the transactions based on the username
-    console.log("This is username:", body.username);
+    //console.log("This is username:", body.username);
+    //console.log("This is password:", body.password);
     const user = await db
       .select({
         user_id: usersTable.user_id,
@@ -28,8 +30,16 @@ export async function POST(request: Request): Promise<NextResponse> {
       .from(usersTable)
       .where(eq(usersTable.username, body.username));
     
-
+    //console.log(user)
     // Return the transactions in JSON format
+
+    // console.log(NextResponse.json(user as Array<{
+    //   user_id: number;
+    //   username: string;
+    //   password: string | null;
+    //   email: string | null;
+    // }>))
+
     return NextResponse.json(user as Array<{
       user_id: number;
       username: string;
