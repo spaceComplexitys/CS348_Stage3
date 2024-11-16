@@ -9,14 +9,13 @@ const Home = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
 
-  
   const [newTransaction, setNewTransaction] = useState<Transaction>({
     date: new Date().toLocaleDateString('en-US', {
       month: '2-digit',
       day: '2-digit',
       year: '2-digit', // This will give the year in YY format
     }),
-    user_id: 2,
+    user_id: 0, // Initialize with a default value
     payee: '',
     category: '',
     memo: '',
@@ -25,9 +24,19 @@ const Home = () => {
   });
 
   useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const userId = parseInt(searchParams.get('userId') || '0', 10); // Default to 0 if not found
+
+    if (userId) {
+      setNewTransaction((prev) => ({
+        ...prev,
+        user_id: userId,
+      }));
+    }
+
     const fetchTransactions = async () => {
       try {
-        const response = await fetch('/api/?userId=2');
+        const response = await fetch(`/api/?userId=${userId}`);
         if (!response.ok) throw new Error('Failed to fetch transactions');
         const data = await response.json();
 
@@ -50,16 +59,15 @@ const Home = () => {
       ...prev,
       [name]:
         (name === 'outflow' || name === 'inflow') && value !== '' && isNaN(Number(value))
-          ? prev[name] // If value is not a number, retain the previous valid value
+          ? prev[name]
           : name === 'outflow' || name === 'inflow'
-            ? parseFloat(value) || '' // Parse valid numbers or set to empty string if NaN
+            ? parseFloat(value) || ''
             : value,
     }));
   };
 
   const addTransaction = async () => {
     try {
-      newTransaction.user_id = 2; // hardcoded for now, will establish auth later
       const response = await fetch('/api/addTransaction', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -80,7 +88,6 @@ const Home = () => {
     try {
       const updatedTransaction = { ...transactions[editIndex], ...newTransaction };
 
-      updatedTransaction.user_id = 2; // hardcoded for now, will establish auth later
       const response = await fetch('/api/updateTransaction', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -135,7 +142,7 @@ const Home = () => {
         day: '2-digit',
         year: 'numeric',
       }),
-      user_id: 2,
+      user_id: newTransaction.user_id, // Retain the user_id
       payee: '',
       category: '',
       memo: '',
@@ -157,8 +164,6 @@ const Home = () => {
         <button style={styles.button} onClick={() => setIsAddingTransaction(true)}>
           + Add Transaction
         </button>
-        <button style={styles.button}>File Import</button>
-        <button style={styles.button}>Record Payment</button>
         <div style={styles.searchContainer}>
           <input style={styles.searchInput} type="text" placeholder="Search transactions" />
         </div>
@@ -177,71 +182,69 @@ const Home = () => {
         </thead>
         <tbody>
           {isAddingTransaction && (
-            <>
-              <tr style={styles.highlightedRow}>
-                <td style={styles.td}>
-                  <span>{newTransaction.date}</span>
-                </td>
-                <td style={styles.td}>
-                  <input
-                    type="text"
-                    name="payee"
-                    value={newTransaction.payee}
-                    onChange={handleInputChange}
-                    placeholder="Enter payee"
-                    style={styles.input}
-                  />
-                </td>
-                <td style={styles.td}>
-                  <input
-                    type="text"
-                    name="category"
-                    value={newTransaction.category}
-                    onChange={handleInputChange}
-                    placeholder="Enter category"
-                    style={styles.input}
-                  />
-                </td>
-                <td style={styles.td}>
-                  <input
-                    type="text"
-                    name="memo"
-                    value={newTransaction.memo}
-                    onChange={handleInputChange}
-                    placeholder="Enter memo"
-                    style={styles.input}
-                  />
-                </td>
-                <td style={styles.td}>
-                  <input
-                    type="text"
-                    name="outflow"
-                    value={newTransaction.outflow}
-                    onChange={handleInputChange}
-                    placeholder="Enter outflow"
-                    style={styles.input}
-                  />
-                </td>
-                <td style={styles.td}>
-                  <input
-                    type="text"
-                    name="inflow"
-                    value={newTransaction.inflow}
-                    onChange={handleInputChange}
-                    placeholder="Enter inflow"
-                    style={styles.input}
-                  />
-                </td>
-                <td style={styles.td}>
-                  <button style={styles.actionButton} onClick={resetForm}>
-                    Cancel
-                  </button>
-                  <button style={styles.actionButton} onClick={handleSave}>
-                    {isEditing ? 'Update' : 'Save'}
-                  </button>
-                </td>
-              </tr>
-            </>
+            <tr style={styles.highlightedRow}>
+              <td style={styles.td}>
+                <span>{newTransaction.date}</span>
+              </td>
+              <td style={styles.td}>
+                <input
+                  type="text"
+                  name="payee"
+                  value={newTransaction.payee}
+                  onChange={handleInputChange}
+                  placeholder="Enter payee"
+                  style={styles.input}
+                />
+              </td>
+              <td style={styles.td}>
+                <input
+                  type="text"
+                  name="category"
+                  value={newTransaction.category}
+                  onChange={handleInputChange}
+                  placeholder="Enter category"
+                  style={styles.input}
+                />
+              </td>
+              <td style={styles.td}>
+                <input
+                  type="text"
+                  name="memo"
+                  value={newTransaction.memo}
+                  onChange={handleInputChange}
+                  placeholder="Enter memo"
+                  style={styles.input}
+                />
+              </td>
+              <td style={styles.td}>
+                <input
+                  type="text"
+                  name="outflow"
+                  value={newTransaction.outflow}
+                  onChange={handleInputChange}
+                  placeholder="Enter outflow"
+                  style={styles.input}
+                />
+              </td>
+              <td style={styles.td}>
+                <input
+                  type="text"
+                  name="inflow"
+                  value={newTransaction.inflow}
+                  onChange={handleInputChange}
+                  placeholder="Enter inflow"
+                  style={styles.input}
+                />
+              </td>
+              <td style={styles.td}>
+                <button style={styles.actionButton} onClick={resetForm}>
+                  Cancel
+                </button>
+                <button style={styles.actionButton} onClick={handleSave}>
+                  {isEditing ? 'Update' : 'Save'}
+                </button>
+              </td>
+            </tr>
           )}
           {transactions.map((transaction, index) => (
             <tr key={index} style={index % 2 ? styles.rowOdd : styles.rowEven}>
@@ -354,4 +357,5 @@ const styles = {
     color: '#aaa',
   },
 };
+
 export default Home;

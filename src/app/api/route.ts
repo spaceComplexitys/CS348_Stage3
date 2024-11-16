@@ -4,9 +4,6 @@ import { NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
 
 export async function GET(request: Request): Promise<NextResponse> {
-  //  const { searchParams } = new URL(request.url);
-  //   const userId = parseFloat(searchParams.get("userId") || "");
-
     try {
       // Get the URL search parameters
       const { searchParams } = new URL(request.url);
@@ -30,10 +27,8 @@ export async function GET(request: Request): Promise<NextResponse> {
           inflow: transactionsTable.inflow,
         })
         .from(transactionsTable)
-        .where(eq(transactionsTable.user_id, user_id ));
+        .where(eq(transactionsTable.user_id, user_id));
   
-      // console.log(transactions)
-      // Return the transactions in JSON format
       return NextResponse.json(transactions as Array<{
         transaction_id: number;
         user_id: number;
