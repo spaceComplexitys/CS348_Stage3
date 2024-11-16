@@ -17,12 +17,12 @@ export async function GET(request: Request): Promise<NextResponse> {
     console.log("This is userid:", userId);
     const transactions = await db
       .select({
-        user_id: usersTable.userId,
+        user_id: usersTable.user_id,
         username: usersTable.username,
         email: usersTable.email,
       })
       .from(usersTable)
-      .where(eq(usersTable.userId, userId));
+      .where(eq(usersTable.user_id, userId));
 
     // Return the transactions in JSON format
     return NextResponse.json(transactions as Array<{
