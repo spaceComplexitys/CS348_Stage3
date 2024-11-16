@@ -9,6 +9,7 @@ const Home = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
 
+  
   const [newTransaction, setNewTransaction] = useState<Transaction>({
     date: new Date().toLocaleDateString('en-US', {
       month: '2-digit',
@@ -26,7 +27,7 @@ const Home = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await fetch('/api');
+        const response = await fetch('/api/?userId=2');
         if (!response.ok) throw new Error('Failed to fetch transactions');
         const data = await response.json();
 

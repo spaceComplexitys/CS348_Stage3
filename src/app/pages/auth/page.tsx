@@ -7,38 +7,25 @@ import { Users } from '@/app/types/user';
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [user, setUser] = useState<Users[]>([]);
   const router = useRouter();
-
-  const [user, setUser] = useState<Users>({
-    user_id: null,
-    username: '',
-    password: '',
-    email: ''
-  });
-
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Update user state with the entered username and password
-    setUser({
-      ...user,
-      username: username,
-      password: password
-    });
-
     try {
-      user.username = 'a'
-      user.password = 'a'
       const response = await fetch('/api/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(user),
+        body: JSON.stringify({username: username, password: password}),
       });
       if (!response.ok) throw new Error('Login failed');
       const data = await response.json();
+      setUser(Array.isArray(data) ? data: [])
 
       if (data != null) {
-        router.push(`/`);
+        console.log(data.user_id)
+        router.push(`/?userId=${user[0].user_id}`);
       } else {
         console.log('Invalid username or password');
       }

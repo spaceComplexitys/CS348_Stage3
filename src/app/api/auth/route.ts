@@ -30,7 +30,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       .from(usersTable)
       .where(eq(usersTable.username, body.username));
     
-    //console.log(user)
+    console.log(user)
     // Return the transactions in JSON format
 
     // console.log(NextResponse.json(user as Array<{
@@ -45,7 +45,8 @@ export async function POST(request: Request): Promise<NextResponse> {
       username: string;
       password: string | null;
       email: string | null;
-    }>);
+    }>
+  );
   } catch (error) {
     console.error('Error fetching transactions:', error);
     return NextResponse.json({ error: 'Failed to fetch transactions' }, { status: 501 });
