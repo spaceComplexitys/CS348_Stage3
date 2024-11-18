@@ -356,6 +356,13 @@ const styles = {
     marginRight: '5px',
     color: '#aaa',
   },
+  linkButton: {
+    background: 'none',
+    border: 'none',
+    color: '#1e90ff',
+    cursor: 'pointer',
+    textDecoration: 'underline',
+  }
 };
 
 export default Home;
