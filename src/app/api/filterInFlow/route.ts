@@ -13,8 +13,6 @@ export async function GET(request: Request): Promise<NextResponse> {
       return NextResponse.json({ error: 'Inflow is required and must be a valid number' }, { status: 400 });
     }
 
-    // Fetch the transactions based on the inflow amount
-    console.log("This is inflow:", inflow);
     const transactions = await db
       .select({
         transaction_id: transactionsTable.transaction_id,

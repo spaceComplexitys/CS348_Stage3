@@ -1,19 +1,6 @@
 import { sql } from 'drizzle-orm';
 import { integer, sqliteTable, text, real, index, uniqueIndex } from 'drizzle-orm/sqlite-core';
 
-// Users Table
-// export const usersTable = sqliteTable('users', {
-//   user_id: integer('user_id').primaryKey(),
-//   username: text('username').notNull(),
-//   password: text('password').notNull(),
-//   email: text('email').unique().notNull(), 
-// }, (table) => {
-//   return {
-//     nameIdx: index("name_idx").on(table.name),
-//     emailIdx: uniqueIndex("email_idx").on(table.email),
-//   };
-// );
-
 export const usersTable = sqliteTable("users", {
   user_id: integer('user_id').primaryKey(),
   username: text('username').notNull(),
@@ -21,6 +8,7 @@ export const usersTable = sqliteTable("users", {
   email: text('email').unique().notNull(), 
 }, (table) => {
   return {
+    userIdx: index('user_id').on(table.username),
     nameIdx: index("name_idx").on(table.username),
     emailIdx: uniqueIndex("email_idx").on(table.email),
   };

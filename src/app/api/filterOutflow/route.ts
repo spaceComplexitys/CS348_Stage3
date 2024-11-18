@@ -13,8 +13,6 @@ export async function GET(request: Request): Promise<NextResponse> {
       return NextResponse.json({ error: 'Outflow is required and must be a valid number' }, { status: 400 });
     }
 
-    // Fetch the transactions based on the outflow amount
-    console.log("This is outflow:", outflow);
     const transactions = await db
       .select({
         transaction_id: transactionsTable.transaction_id,

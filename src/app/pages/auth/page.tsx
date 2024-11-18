@@ -24,10 +24,9 @@ const Login = () => {
       setUser(Array.isArray(data) ? data: [])
 
       if (data != null) {
-        console.log(data.user_id)
         router.push(`/?userId=${user[0].user_id}`);
       } else {
-        console.log('Invalid username or password');
+        console.error('Invalid username or password');
       }
     } catch (error) {
       console.error('Error during login:', error);

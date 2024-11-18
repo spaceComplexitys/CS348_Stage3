@@ -13,8 +13,6 @@ export async function GET(request: Request): Promise<NextResponse> {
         return NextResponse.json({ error: 'userId is required' }, { status: 400 });
       }
   
-      // Fetch the transactions based on the payee
-      console.log("This is UserId Fetch All Transactions:", user_id);
       const transactions = await db
         .select({
           transaction_id: transactionsTable.transaction_id,

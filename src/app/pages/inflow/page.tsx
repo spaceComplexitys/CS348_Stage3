@@ -1,28 +1,35 @@
 'use client';
 
 import { Transaction } from '@/app/types/transaction';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 const Inflow = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        const response = await fetch('/api/filterInFlow?inflow=0'); // Update the URL as per your API route
-        if (!response.ok) throw new Error('Failed to fetch transactions');
-        const data = await response.json();
-        setTransactions(data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTransactions();
+  const fetchTransactions = useCallback(async (inflowValue: string) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/filterInFlow?inflow=${inflowValue}`);
+      if (!response.ok) throw new Error('Failed to fetch transactions');
+      const data = await response.json();
+      setTransactions(data);
+    } catch (error) {
+      console.error(error);
+      setTransactions([]); // Clear transactions in case of error
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  // Debounce API calls to prevent frequent requests
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      fetchTransactions(searchQuery || '0'); // Default to inflow=0 if search is empty
+    }, 300); // Adjust debounce delay if needed
+    return () => clearTimeout(timeout);
+  }, [searchQuery, fetchTransactions]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -35,7 +42,13 @@ const Inflow = () => {
         <button style={styles.button}>File Import</button>
         <button style={styles.button}>Record Payment</button>
         <div style={styles.searchContainer}>
-          <input style={styles.searchInput} type="text" placeholder="Search transactions" />
+          <input
+            style={styles.searchInput}
+            type="text"
+            placeholder="Search inflow amount"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
       </div>
       <table style={styles.table}>
@@ -50,22 +63,32 @@ const Inflow = () => {
           </tr>
         </thead>
         <tbody>
-          {transactions.map((transaction, index) => (
-            <tr key={index} style={index % 2 ? styles.rowOdd : styles.rowEven}>
-              <td style={styles.td}><i style={styles.icon}>ℹ️</i> {transaction.date}</td>
-              <td style={styles.td}>{transaction.payee}</td>
-              <td style={styles.td}>
-                {transaction.category === "This needs a category" ? (
-                  <span style={styles.needsCategory}>{transaction.category}</span>
-                ) : (
-                  transaction.category
-                )}
+          {transactions.length > 0 ? (
+            transactions.map((transaction, index) => (
+              <tr key={index} style={index % 2 ? styles.rowOdd : styles.rowEven}>
+                <td style={styles.td}>
+                  <i style={styles.icon}>ℹ️</i> {transaction.date}
+                </td>
+                <td style={styles.td}>{transaction.payee}</td>
+                <td style={styles.td}>
+                  {transaction.category === 'This needs a category' ? (
+                    <span style={styles.needsCategory}>{transaction.category}</span>
+                  ) : (
+                    transaction.category
+                  )}
+                </td>
+                <td style={styles.td}>{transaction.memo}</td>
+                <td style={styles.td}>{transaction.outflow}</td>
+                <td style={styles.td}>{transaction.inflow}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td style={styles.td} colSpan={6}>
+                No transactions found
               </td>
-              <td style={styles.td}>{transaction.memo}</td>
-              <td style={styles.td}>{transaction.outflow}</td>
-              <td style={styles.td}>{transaction.inflow}</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
     </div>
