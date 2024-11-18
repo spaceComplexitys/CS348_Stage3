@@ -1,4 +1,5 @@
-import { eq} from 'drizzle-orm';
+export const dynamic = 'force-dynamic';
+import { eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { usersTable } from '@/db/schema';
 import { NextResponse } from 'next/server';
