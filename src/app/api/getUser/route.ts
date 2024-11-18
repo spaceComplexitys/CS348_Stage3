@@ -13,8 +13,6 @@ export async function GET(request: Request): Promise<NextResponse> {
       return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
     }
 
-    // Fetch the transactions based on the user ID
-    console.log("This is userid:", userId);
     const transactions = await db
       .select({
         user_id: usersTable.user_id,

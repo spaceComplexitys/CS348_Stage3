@@ -10,8 +10,6 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const transaction_id = parseFloat(searchParams.get('transaction_id') || '');
 
-    console.log('transaction_id', transaction_id);
-
     // Proceed with the delete operation in the database
     const deleteResult = await db
       .delete(transactionsTable)

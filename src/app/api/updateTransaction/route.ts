@@ -19,8 +19,6 @@ export async function POST(request: NextRequest) {
       inflow: body.inflow || 0,
     };
 
-    console.log('server side:', data);
-
     // Update the transaction in the database
     const updatedTransaction = await db
       .update(transactionsTable)
