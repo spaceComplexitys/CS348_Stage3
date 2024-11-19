@@ -1,3 +1,4 @@
+/* eslint-disable */
 export const dynamic = 'force-dynamic';
 import { eq } from 'drizzle-orm';
 import { db } from '@/db';

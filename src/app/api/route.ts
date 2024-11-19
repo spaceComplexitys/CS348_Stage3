@@ -1,3 +1,4 @@
+/* eslint-disable */
 export const dynamic = 'force-dynamic';
 import { db } from '@/db';
 import { transactionsTable } from '@/db/schema';

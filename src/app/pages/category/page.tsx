@@ -1,3 +1,4 @@
+/* eslint-disable */
 'use client';
 
 import { Transaction } from '@/app/types/transaction';

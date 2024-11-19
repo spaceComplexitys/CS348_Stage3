@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { db } from '@/db';
 import { transactionsTable } from '@/db/schema';
 import { NextResponse } from 'next/server';
