@@ -363,7 +363,7 @@ const styles = {
     color: '#1e90ff',
     cursor: 'pointer',
     textDecoration: 'underline',
-  }
+  },
 };
 
 export default Home;
