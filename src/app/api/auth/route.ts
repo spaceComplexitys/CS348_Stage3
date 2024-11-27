@@ -11,6 +11,9 @@ export async function POST(request: Request): Promise<NextResponse> {
     if (!body.username) {
       return NextResponse.json({ error: 'Username is required' }, { status: 400 });
     }
+    console.log("Usernamea: ", body.username)
+    console.log("Password:", body.password)
+
     
     const user = await db
       .select({
