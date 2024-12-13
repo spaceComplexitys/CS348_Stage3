@@ -1,21 +1,12 @@
 ## Getting Started
 
-First, run the development server:
 
-```bash
-npm i 
+For TA login, 
 
-npm run dev
-```
+The username is b
+The password is b
 
-For changing the schema
-```bash
-
-rm -rf migration
-
-npx drizzle-kit generate
-npx drizzle-kit push
-```
+Then press login button with haptic touch if on mac.
 
 ## Deploy on Vercel
 
