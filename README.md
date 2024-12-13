@@ -3,8 +3,9 @@
 
 For TA login, 
 
-The username is b
-The password is b
+To access the system, use the following credentials:
+	•	Username: b
+	•	Password: b
 
 Then press login button with haptic touch if on mac.
 
